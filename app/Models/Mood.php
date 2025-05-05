@@ -9,4 +9,17 @@ class Mood extends Model
 {
     /** @use HasFactory<\Database\Factories\MoodFactory> */
     use HasFactory;
+
+    protected $table = "moods";
+    protected $fillable = [
+        'user_id',
+        "emoji",
+        "note",
+        "rating"
+    ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

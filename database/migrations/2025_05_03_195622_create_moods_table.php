@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('moods', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->string('emoji');
+            $table->text('note')->nullable();
+            $table->integer('rating')->nullable()->range(1, 10);
             $table->timestamps();
         });
     }
