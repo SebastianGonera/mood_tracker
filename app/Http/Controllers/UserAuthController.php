@@ -6,6 +6,7 @@ use App\Http\Requests\LoginUserRequest;
 use App\Http\Requests\RegisterUserRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class UserAuthController extends Controller
 {
@@ -40,6 +41,7 @@ class UserAuthController extends Controller
                 'token' => $token,
             ], 201);
         } catch (\Exception $e) {
+            Log::error("Error in REGISTER endpoint: " . $e->getMessage());
             // Handle any exceptions that occur during registration
             return response()->json([
                 'message' => 'Error occurred during registration',
@@ -80,6 +82,7 @@ class UserAuthController extends Controller
                 ], 200);
             }
         } catch (\Exception $e) {
+            Log::error("Error in LOGIN endpoint: " . $e->getMessage());
             // Handle any exceptions that occur during registration
             return response()->json([
                 'message' => 'Error occurred during login',
@@ -106,6 +109,7 @@ class UserAuthController extends Controller
                 'message' => 'User logged out successfully',
             ], 200);
         } catch (\Exception $e) {
+            Log::error("Error in LOGOUT endpoint: " . $e->getMessage());
             // Handle any exceptions that occur during logout
             return response()->json([
                 'message' => 'Error occurred during logout',
