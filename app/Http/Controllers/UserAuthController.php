@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginUserRequest;
+use App\Http\Requests\LogoutUserRequest;
 use App\Http\Requests\RegisterUserRequest;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
@@ -95,11 +97,19 @@ class UserAuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function logout()
+    public function logout(LogoutUserRequest $request)
     {
         try {
-            // Get the authenticated user
-            $user = Auth::user();
+            // Find the user by email
+            // The email is provided in the request
+            $user = User::where('email', $request['email'])->first();
+
+            // Check if the user is authenticated
+            if ($user === null) {
+                return response()->json([
+                    'message' => 'User not found',
+                ], 404);
+            }
 
             // Revoke all tokens for the user
             $user->tokens()->delete();
