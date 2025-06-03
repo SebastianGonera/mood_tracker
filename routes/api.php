@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\UserAuthController;
@@ -18,8 +17,20 @@ Route::group(['prefix' => 'moods'], function () {
     // This route is for fetching moods of a specific user
     Route::get('/{userId}', [MoodController::class, 'index'])
         ->name('moods.index')
-        ->where('userId', '[0-9]+'); // Ensure userId is a number
+        // Ensure userId is a number
+        ->where('userId', '[0-9]+');
+
     // This route is for storing a new mood
     Route::post('/', [MoodController::class, 'store'])
         ->name('moods.store');
+
+    // This route is for updating an existing mood
+    Route::put('/{moodId}', [MoodController::class, 'update'])
+        ->name('moods.update')
+        ->where('moodId', '[0-9]+');
+
+    // This route is for deleting a mood
+    Route::delete('/{moodId}', [MoodController::class, 'delete'])
+        ->name('moods.destroy')
+        ->where('moodId', '[0-9]+');
 });

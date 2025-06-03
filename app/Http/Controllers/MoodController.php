@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreMoodRequest;
+use App\Http\Requests\UpdateMoodRequest;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use App\Models\Mood;
+use Illuminate\Database\Eloquent\Casts\Json;
 use Illuminate\Http\JsonResponse;
 
 class MoodController extends Controller
@@ -68,6 +70,50 @@ class MoodController extends Controller
             ], 500);
         }
     }
+
+
+    /**
+     * Update an existing mood by its ID.
+     *
+     * @param  \App\Http\Requests\UpdateMoodRequest  $request
+     * @param  int  $moodId
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function update(UpdateMoodRequest $request, int $moodId): JsonResponse
+    {
+        try {
+            // Find the mood by its ID
+            // The request is already validated by UpdateMoodRequest
+            $mood = Mood::find($moodId);
+
+            // If the mood does not exist, return a 404 response
+            if (!$mood) {
+                return response()->json([
+                    'message' => 'Mood not found',
+                ], 404);
+            }
+
+            // Update the mood with the validated data from the request
+            $mood->emoji = $request->emoji;
+            $mood->note = $request->note;
+            $mood->rating = $request->rating;
+            $mood->save();
+
+            // Return a JSON response indicating successful update
+            return response()->json([
+                'message' => 'Mood updated successfully',
+                'data' => $mood
+            ], 200);
+        } catch (\Exception $e) {
+            Log::error("Error in Mood endpoint: " . $e->getMessage());
+            // Handle any exceptions that occur during updating mood
+            return response()->json([
+                'message' => 'Error occurred during updating mood',
+            ], 500);
+        }
+    }
+
+
 
     /**
      * Delete a mood by its ID.
