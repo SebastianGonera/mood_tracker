@@ -5,9 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreMoodRequest;
 use App\Http\Requests\UpdateMoodRequest;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Http\Request;
 use App\Models\Mood;
-use Illuminate\Database\Eloquent\Casts\Json;
 use Illuminate\Http\JsonResponse;
 
 class MoodController extends Controller
@@ -22,8 +20,10 @@ class MoodController extends Controller
     {
         try {
             // Fetch all moods for the user
-            $moods = Mood::where('user_id', $userId)->get();
-
+            $moods = Mood::where('user_id', $userId)
+                ->select('id', 'emoji', 'note', 'rating', 'created_at', 'updated_at')
+                ->orderBy('created_at', 'desc')
+                ->get();
 
             return response()->json([
                 'message' => 'Moods retrieved successfully',
@@ -56,6 +56,15 @@ class MoodController extends Controller
                 'rating' => $request->rating,
                 'user_id' => $request->user_id,
             ]);
+
+            $newMood = [
+                'user_id' => $newMood->user_id,
+                'id' => $newMood->id,
+                'emoji' => $newMood->emoji,
+                'note' => $newMood->note,
+                'rating' => $newMood->rating,
+                'created_at' => $newMood->created_at,
+            ];
 
             // Return a JSON response with the newly created mood
             return response()->json([
@@ -98,6 +107,14 @@ class MoodController extends Controller
             $mood->note = $request->note;
             $mood->rating = $request->rating;
             $mood->save();
+
+            $mood = [
+                'id' => $mood->id,
+                'emoji' => $mood->emoji,
+                'note' => $mood->note,
+                'rating' => $mood->rating,
+                'updated_at' => $mood->updated_at
+            ];
 
             // Return a JSON response indicating successful update
             return response()->json([
