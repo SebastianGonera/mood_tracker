@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreMoodRequest extends FormRequest
@@ -11,7 +12,7 @@ class StoreMoodRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return Auth::check(); // Ensure the user is authenticated
     }
 
     /**

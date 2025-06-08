@@ -13,7 +13,11 @@ Route::group(['prefix' => 'auth'], function () {
     Route::post('/logout', [UserAuthController::class, 'logout']);
 });
 
-Route::group(['prefix' => 'moods'], function () {
+// It defines the routes for managing moods of a user
+// The routes are protected by the 'auth:sanctum' middleware to ensure that only authenticated users can access them
+// The 'moods' prefix is used for all mood-related routes
+// The routes include fetching moods, storing a new mood, updating an existing mood, and deleting a mood
+Route::group(['prefix' => 'moods', 'middleware' => 'auth:sanctum'], function () {
     // This route is for fetching moods of a specific user
     Route::get('/{userId}', [MoodController::class, 'index'])
         ->name('moods.index')

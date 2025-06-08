@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Http\FormRequest;
 
 class LogoutUserRequest extends FormRequest
@@ -11,7 +12,7 @@ class LogoutUserRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return Auth::check();
     }
 
     /**
