@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\UserAuthController;
 use App\Http\Controllers\MoodController;
+use App\Http\Middleware\ValidateNumericRouteParam;
 
 // This is the API route file for user authentication
 // It defines the routes for user registration, login, and logout
@@ -20,9 +21,8 @@ Route::group(['prefix' => 'auth'], function () {
 Route::group(['prefix' => 'moods', 'middleware' => 'auth:sanctum'], function () {
     // This route is for fetching moods of a specific user
     Route::get('/{userId}', [MoodController::class, 'index'])
-        ->name('moods.index')
-        // Ensure userId is a number
-        ->where('userId', '[0-9]+');
+        ->middleware('validate_id:userId') // Ensure userId is a number
+        ->name('moods.index');
 
     // This route is for storing a new mood
     Route::post('/', [MoodController::class, 'store'])
@@ -35,6 +35,6 @@ Route::group(['prefix' => 'moods', 'middleware' => 'auth:sanctum'], function () 
 
     // This route is for deleting a mood
     Route::delete('/{moodId}', [MoodController::class, 'delete'])
-        ->name('moods.destroy')
-        ->where('moodId', '[0-9]+');
+        ->middleware('validate_id:moodId') // Ensure moodId is a number
+        ->name('moods.destroy');
 });
