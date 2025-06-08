@@ -7,9 +7,12 @@ use App\Http\Requests\UpdateMoodRequest;
 use Illuminate\Support\Facades\Log;
 use App\Models\Mood;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class MoodController extends Controller
 {
+    use AuthorizesRequests;
+
     /**
      * Display a listing of the moods for a specific user.
      *
@@ -19,6 +22,8 @@ class MoodController extends Controller
     public function index(int $userId): JsonResponse
     {
         try {
+            $this->authorize('viewAny', Mood::class);
+
             // Fetch all moods for the user
             $moods = Mood::where('user_id', $userId)
                 ->select('id', 'emoji', 'note', 'rating', 'created_at', 'updated_at')
@@ -47,6 +52,7 @@ class MoodController extends Controller
     public function store(StoreMoodRequest $request): JsonResponse
     {
         try {
+            $this->authorize('create', Mood::class);
             // Validate the request using StoreMoodRequest
             // The request is already validated by StoreMoodRequest
             // Create a new mood entry in the database
@@ -91,6 +97,7 @@ class MoodController extends Controller
     public function update(UpdateMoodRequest $request, int $moodId): JsonResponse
     {
         try {
+            $this->authorize('update', Mood::class);
             // Find the mood by its ID
             // The request is already validated by UpdateMoodRequest
             $mood = Mood::find($moodId);
@@ -130,8 +137,6 @@ class MoodController extends Controller
         }
     }
 
-
-
     /**
      * Delete a mood by its ID.
      * @param  int  $userId
@@ -142,7 +147,7 @@ class MoodController extends Controller
         try {
             // Find the mood by its ID
             $mood = Mood::find($moodId);
-
+            $this->authorize('delete', $mood);
             // If the mood does not exist, return a 404 response
             if (!$mood) {
                 return response()->json([
